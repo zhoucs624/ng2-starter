@@ -6,17 +6,16 @@ const commonConfig = require('./webpack.common'); // the settings that are commo
  * Webpack Plugins
  */
 const webpack = require('webpack');
-const DefinePlugin = webpack.DefinePlugin;
+const DefinePlugin = require('webpack/lib/DefinePlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HashedModuleIdsPlugin = webpack.HashedModuleIdsPlugin;
-const IgnorePlugin = webpack.IgnorePlugin;
-const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
-const NormalModuleReplacementPlugin = webpack.NormalModuleReplacementPlugin;
-const ProvidePlugin = webpack.ProvidePlugin;
-const ModuleConcatenationPlugin = webpack.ModuleConcatenationPlugin;
+const HashedModuleIdsPlugin = require('webpack/lib/HashedModuleIdsPlugin');
+const IgnorePlugin = require('webpack/lib/IgnorePlugin');
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
+const ProvidePlugin = require('webpack/lib/ProvidePlugin');
+const ModuleConcatenationPlugin = require('webpack/lib/optimize/ModuleConcatenationPlugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeJsPlugin = require('optimize-js-plugin');
-
 /**
  * Webpack Constants
  */
@@ -145,18 +144,23 @@ module.exports = function (env) {
        * NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
        */
       new UglifyJsPlugin({
-        parallel: true,
+        sourceMap: true,
         uglifyOptions: {
           ie8: false,
-          ecma: 6,
-          warnings: true,
+          ecma: 5,
+          warnings: false,
           mangle: true, // debug false
+          compress: {
+            pure_getters: true, /* buildOptimizer */
+            // PURE comments work best with 3 passes.
+            // See https://github.com/webpack/webpack/issues/2899#issuecomment-317425926.
+            passes: 3         /* buildOptimizer */
+          },
           output: {
             comments: false,
             beautify: false, // debug true
           }
-        },
-        warnings: true,
+        }
       }),
 
       /**
