@@ -14,6 +14,7 @@ npm install
 ## features
 
 * webpack
+* HMR
 * lazyload
 * tslint
 * unit-testing
